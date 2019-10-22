@@ -1,0 +1,228 @@
+{% extends 'public/base2.html' %}
+{% load staticfiles %}
+{% block title %}
+    注册页面
+{% endblock %}
+{% block header %}
+
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+{% endblock %}
+{% block search %}
+
+{% endblock %}
+{% block context %}
+    <div class="register_con">
+        <div class="l_con fl">
+            <a class="reg_logo"><img src="{% static '' %}images/logo02.png"></a>
+            <div class="reg_slogan">良心食材~放心享用~</div>
+            <div class="reg_banner"></div>
+        </div>
+
+        <div class="r_con fr">
+            <div class="reg_title clearfix">
+                <h1>用户注册</h1>
+                <a href="/user/login/">登录 ></a>
+            </div>
+            <div class="reg_form clearfix">
+                <form method="post" action="/user/register/" id="form_register">
+                    {% csrf_token %}
+                    <ul>
+                        <li>
+                            <label>用户名:</label>
+                            <input type="text" name="user_name" id="user_name">
+                            <span class="error_tip unameSpan">提示信息</span>
+                        </li>
+                        <li>
+                            <label>密码:</label>
+                            <input type="password" name="pwd" id="pwd">
+                            <span class="error_tip pwdSpan">提示信息</span>
+                        </li>
+                        <li>
+                            <label>确认密码:</label>
+                            <input type="password" name="cpwd" id="cpwd">
+                            <span class="error_tip cpwdSpan">提示信息</span>
+                        </li>
+                        <li>
+                            <label>邮箱:</label>
+                            <input type="text" name="email" id="email">
+                            <span class="error_tip emailSpan">提示信息</span>
+                        </li>
+                        <li class="agreement">
+                            <input type="checkbox" name="allow" id="allow" checked="checked">
+                            <label> 同意 《良食速运用户使用协议》 </label>
+                            <span class="error_tip2 allowSpan">提示信息</span>
+                        </li>
+                        <li class="reg_sub">
+                            <input type="submit" value="注 册" name="">
+                        </li>
+                    </ul>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+{% block bottem_js %}
+    <script>
+        $(function () {
+            uname_error = false;
+            pwd_error = false;
+            cpwd_error = false;
+            email_error = false;
+            allow_error = false;
+            $('#user_name').blur(function () {
+                check_uname()
+            });
+            $('#pwd').blur(function () {
+                check_pwd()
+            });
+            $('#cpwd').blur(function () {
+                check_cpwd()
+            });
+            $('#email').blur(function () {
+                check_email()
+            });
+            $('#allow').blur(function () {
+                check_allow()
+            });
+            {#用户名验证#}
+
+            function check_uname() {
+                username = $('#user_name').val();
+                {# 英文加数字 #}
+                res = /^[A-Za-z0-9]+$/;
+                $('.unameSpan').css('display', 'block');
+                if (username.length == 0) {
+                    $('.unameSpan').text('* 用户名不能为空');
+                    $('.unameSpan').css('color', 'red');
+                    uname_error = true
+                } else if (res.test(username)) {
+                    $.get('/user/code_uname/', {
+                            'username': username
+                        },
+                        function (data) {
+                            flag = data.flag
+                            if (flag) {
+                                $('.unameSpan').text('* 用户名已存在');
+                                $('.unameSpan').css('color', 'red');
+                                uname_error = true
+                            } else {
+                                $('.unameSpan').text('* 用户名可用');
+                                $('.unameSpan').css('color', 'green');
+                                uname_error = false
+                            }
+                        })
+
+                } else {
+                    $('.unameSpan').text('* 用户名格式为字母+数字');
+                    $('.unameSpan').css('color', 'red');
+                    uname_error = true
+                }
+
+            }
+
+            function check_pwd() {
+                password = $('#pwd').val();
+                {# 英文加数字 #}
+                res = /^[A-Za-z0-9]+$/;
+                $('.pwdSpan').css('display', 'block');
+                if (password.length == 0) {
+                    $('.pwdSpan').text('* 密码不能为空');
+                    $('.pwdSpan').css('color', 'red');
+                    pwd_error = true
+                } else if (res.test(password)) {
+                    $('.pwdSpan').text('* 密码可用');
+                    $('.pwdSpan').css('color', 'green');
+                    pwd_error = false
+                } else {
+                    $('.unameSpan').text('* 密码格式为字母+数字');
+                    $('.unameSpan').css('color', 'red');
+                    pwd_error = true
+                }
+
+            }
+
+            function check_cpwd() {
+                password = $('#pwd').val();
+                cpassword = $('#cpwd').val();
+                $('.cpwdSpan').css('display', 'block');
+                if (cpassword.length == 0) {
+                    $('.cpwdSpan').text('* 请输入密码');
+                    $('.cpwdSpan').css('color', 'red');
+                    cpwd_err = true
+                } else if (password == cpassword) {
+                    $('.cpwdSpan').text('* 密码一致');
+                    $('.cpwdSpan').css('color', 'green');
+                    cpwd_error = false
+                } else {
+                    $('.cpwdSpan').text('* 两次密码不一致');
+                    $('.cpwdSpan').css('color', 'red');
+                    cpwd_err = true
+                }
+            }
+
+            function check_email() {
+                email = $('#email').val();
+                {# email #}
+                res = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                $('.emailSpan').css('display', 'block');
+                if (email.length == 0) {
+                    $('.emailSpan').text('* 邮箱不能为空');
+                    $('.emailSpan').css('color', 'red');
+                    email_error = true
+                } else if (res.test(email)) {
+                    $.get('/user/code_email/', {
+                            'email': email
+                        },
+                        function (data) {
+                            flag = data.flag
+                            if (flag) {
+                                $('.emailSpan').text('* 邮箱已经被注册');
+                                $('.emailSpan').css('color', 'red');
+                                email_error = true
+                            } else {
+                                $('.emailSpan').text('* 邮箱可用');
+                                $('.emailSpan').css('color', 'green');
+                                email_error = false
+                            }
+                        })
+
+                } else {
+                    $('.emailSpan').text('* 邮箱格式错误');
+                    $('.emailSpan').css('color', 'red');
+                    email_error = true
+                }
+
+            }
+
+            function check_allow() {
+                allow = $('#allow').is(':checked');
+                if (allow) {
+                    allow_error = false
+                } else {
+                    alert('请勾选 《良食速运用户使用协议》');
+                    allow_error = true
+                }
+
+
+            }
+
+            $('#form_register').submit(function () {
+                check_uname();
+                check_pwd();
+                check_cpwd();
+                check_email();
+                check_allow();
+
+                if (uname_error && pwd_error && cpwd_err && email_error && allow_error) {
+                    return false
+                } else {
+                    return true
+                }
+            })
+        })
+    </script>
+{% endblock %}

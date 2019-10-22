@@ -1,0 +1,11 @@
+pip install Pillow
+pip install mysqlclient
+pip install itsdangerous
+pip install jsonpickle
+pip install django-redis
+pip install django-haystack
+pip install whoosh
+pip install jiaba
+pip install alipay
+pip install python-alipay-sdk --upgrade
+
